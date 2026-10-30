@@ -137,7 +137,7 @@ details > div { padding: 0 16px 14px 42px; }
 summary .tag { font-family: var(--font-mono); font-size: 11.5px; color: var(--muted); font-weight: 400; margin-left: auto; }
 
 figure { margin: 18px 0; }
-figure svg { width: 100%; height: auto; display: block; }
+figure > svg { width: 100%; height: auto; display: block; }
 figcaption { font-size: 14px; color: var(--muted); margin-top: 6px; }
 .fig-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
 
@@ -491,7 +491,7 @@ button.btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
   <h2><span class="n">07</span>Flüssigkeitspendel (U-Rohr)</h2>
   <div class="fig-row">
     <figure>
-      <svg viewBox="0 0 240 250" role="img" aria-label="U-Rohr: Flüssigkeit rechts um s gestiegen, links um s gesunken, Höhenunterschied 2s">
+      <svg viewBox="0 0 240 258" role="img" aria-label="U-Rohr: Flüssigkeit rechts um s gestiegen, links um s gesunken, Höhenunterschied 2s">
         <path d="M60 20 V170 A60 60 0 0 0 180 170 V20" fill="none" stroke="var(--ink)" stroke-width="22" stroke-linecap="butt" opacity=".18"/>
         <path d="M60 130 V170 A60 60 0 0 0 180 170 V70" fill="none" stroke="var(--accent)" stroke-width="18" opacity=".55"/>
         <rect x="171" y="70" width="18" height="60" fill="var(--s)" opacity=".55"/>
@@ -502,7 +502,7 @@ button.btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
         <text x="218" y="104" font-size="13" fill="var(--muted)">0</text>
         <text x="218" y="134" font-size="13" fill="var(--v)">−s</text>
         <text x="110" y="105" font-size="13" fill="var(--s)">2s</text>
-        <text x="80" y="242" font-size="13" fill="var(--muted)">Querschnitt A, Dichte ρ, Gesamtlänge L</text>
+        <text x="120" y="254" font-size="11" fill="var(--muted)" text-anchor="middle">Querschnitt A, Dichte ρ, Gesamtlänge L</text>
       </svg>
       <figcaption>Steigt die Flüssigkeit rechts um \(s\), sinkt sie links um \(s\). Die rot markierte Säule der Länge \(2s\) ist „zu viel“. Ihr Gewicht beschleunigt bzw. bremst die gesamte Flüssigkeitssäule.</figcaption>
     </figure>

@@ -1,0 +1,883 @@
+<title>Mechanische Schwingungen</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+  svg: { fontCache: 'global' },
+  options: { enableMenu: false }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js" defer></script>
+<style>
+/* Layout: Notizheft auf Punktraster. Schmale Inhaltsspalte, links Inhaltsverzeichnis (Desktop).
+   Farben folgen der Mitschrift: s rot, v grün, a magenta, Tinte blau. */
+:root {
+  --paper: #f7f8fb;
+  --dot: #d5d9e4;
+  --ink: #1c2233;
+  --muted: #5a6275;
+  --line: #d9dde7;
+  --card: #ffffff;
+  --accent: #2b4fb8;
+  --accent-soft: #e6ecfb;
+  --s: #c7303c;
+  --s-soft: #fbe8ea;
+  --v: #23804a;
+  --v-soft: #e4f3e9;
+  --a: #b02f7c;
+  --a-soft: #f8e5f0;
+  --warn: #9a5b00;
+  --warn-soft: #fdf1dc;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #121621; --dot: #232a3a; --ink: #e5e8f0; --muted: #9aa3b8; --line: #2c3446; --card: #1a2030;
+    --accent: #8ea8ff; --accent-soft: #222c48;
+    --s: #ff7a83; --s-soft: #3a1f25; --v: #6ad395; --v-soft: #1b3326; --a: #f27fc3; --a-soft: #3a1d30;
+    --warn: #f0b75c; --warn-soft: #3a2c14;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #121621; --dot: #232a3a; --ink: #e5e8f0; --muted: #9aa3b8; --line: #2c3446; --card: #1a2030;
+  --accent: #8ea8ff; --accent-soft: #222c48;
+  --s: #ff7a83; --s-soft: #3a1f25; --v: #6ad395; --v-soft: #1b3326; --a: #f27fc3; --a-soft: #3a1d30;
+  --warn: #f0b75c; --warn-soft: #3a2c14;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--paper);
+  background-image: radial-gradient(var(--dot) 1px, transparent 1.2px);
+  background-size: 22px 22px;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16.5px;
+  line-height: 1.6;
+}
+.wrap {
+  max-width: 1180px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 80px;
+  display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 48px;
+}
+nav.toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 24px); align-self: start; font-size: 14px; }
+nav.toc p { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; }
+nav.toc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; counter-reset: t; }
+nav.toc li { counter-increment: t; }
+nav.toc a { display: flex; gap: 8px; padding: 4px 8px; border-radius: 6px; color: var(--ink); text-decoration: none; }
+nav.toc a::before { content: counter(t); font-family: var(--font-mono); color: var(--muted); min-width: 1.4em; font-size: 12.5px; padding-top: 1px; }
+nav.toc a:hover, nav.toc a:focus-visible { background: var(--accent-soft); outline: none; }
+main { min-width: 0; max-width: 780px; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; line-height: 1.15; }
+h1 { font-size: clamp(34px, 6vw, 54px); margin: 6px 0 12px; font-weight: 700; letter-spacing: -.01em; }
+h2 { font-size: clamp(25px, 3.6vw, 32px); margin: 0 0 14px; font-weight: 700; display: flex; gap: 12px; align-items: baseline; }
+h2 .n { font-family: var(--font-mono); font-size: 15px; color: var(--accent); font-weight: 500; }
+h3 { font-size: 20px; margin: 30px 0 8px; font-weight: 600; }
+p { margin: 0 0 14px; }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
+.lead { font-size: 18.5px; color: var(--muted); max-width: 62ch; }
+section { padding-top: 54px; scroll-margin-top: 20px; }
+section + section { border-top: 1px dashed var(--line); margin-top: 54px; }
+a { color: var(--accent); }
+ul, ol { padding-left: 1.3em; margin: 0 0 14px; }
+li { margin-bottom: 4px; }
+strong { font-weight: 600; }
+code, .mono { font-family: var(--font-mono); font-size: .92em; }
+
+/* Kästen */
+.box { border: 1px solid var(--line); background: var(--card); border-radius: 10px; padding: 16px 18px; margin: 18px 0; }
+.box > :last-child { margin-bottom: 0; }
+.box-title { font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 8px; font-weight: 500; }
+.merke { border-color: var(--accent); background: var(--accent-soft); }
+.merke .box-title { color: var(--accent); }
+.warn { border-color: var(--warn); background: var(--warn-soft); }
+.warn .box-title { color: var(--warn); }
+.extra { border-style: dashed; }
+.extra .box-title { color: var(--muted); }
+.law { border-left: 4px solid; border-radius: 6px 10px 10px 6px; }
+.law.s { border-left-color: var(--s); background: var(--s-soft); }
+.law.v { border-left-color: var(--v); background: var(--v-soft); }
+.law.a { border-left-color: var(--a); background: var(--a-soft); }
+.law .box-title { color: var(--ink); }
+.cs { color: var(--s); } .cv { color: var(--v); } .ca { color: var(--a); }
+
+.steps { counter-reset: st; list-style: none; padding: 0; display: grid; gap: 12px; }
+.steps > li { counter-increment: st; display: grid; grid-template-columns: 30px minmax(0,1fr); gap: 10px; margin: 0; }
+.steps > li::before { content: counter(st); font-family: var(--font-mono); font-size: 13px; width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid var(--accent); color: var(--accent); display: grid; place-items: center; margin-top: 2px; }
+.steps > li > div { min-width: 0; }
+.why { color: var(--muted); font-size: 15px; }
+
+.math-scroll { overflow-x: auto; overflow-y: hidden; padding: 2px 0; }
+mjx-container[display="true"] { margin: 10px 0 !important; }
+
+.tbl { overflow-x: auto; margin: 16px 0; }
+table { border-collapse: collapse; width: 100%; font-size: 15px; background: var(--card); }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-family: var(--font-mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+td.num { font-variant-numeric: tabular-nums; }
+
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; margin: 16px 0; }
+.cols > .box { margin: 0; }
+
+details { border: 1px solid var(--line); border-radius: 10px; background: var(--card); margin: 12px 0; }
+summary { cursor: pointer; padding: 12px 16px; font-weight: 600; list-style: none; display: flex; gap: 10px; align-items: baseline; }
+summary::-webkit-details-marker { display: none; }
+summary::before { content: "+"; font-family: var(--font-mono); color: var(--accent); width: 1em; }
+details[open] summary::before { content: "−"; }
+summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 10px; }
+details > div { padding: 0 16px 14px 42px; }
+summary .tag { font-family: var(--font-mono); font-size: 11.5px; color: var(--muted); font-weight: 400; margin-left: auto; }
+
+figure { margin: 18px 0; }
+figure svg { width: 100%; height: auto; display: block; }
+figcaption { font-size: 14px; color: var(--muted); margin-top: 6px; }
+.fig-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+
+/* Labor */
+.lab { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; margin: 24px 0 8px; }
+.lab-canvases { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 14px; }
+.lab canvas { width: 100%; height: 280px; display: block; }
+.controls { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px 18px; margin-top: 14px; }
+.ctl label { display: flex; justify-content: space-between; font-size: 14px; color: var(--muted); }
+.ctl label output { font-family: var(--font-mono); color: var(--ink); font-variant-numeric: tabular-nums; }
+.ctl input[type=range] { width: 100%; accent-color: var(--accent); }
+.lab-bar { display: flex; flex-wrap: wrap; gap: 10px 22px; align-items: center; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+button.btn { font: 500 14px var(--font-body); padding: 7px 14px; border-radius: 8px; border: 1px solid var(--accent); background: var(--accent); color: var(--card); cursor: pointer; }
+button.btn.ghost { background: transparent; color: var(--accent); }
+button.btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.readout { display: flex; flex-wrap: wrap; gap: 4px 18px; font-family: var(--font-mono); font-size: 13.5px; font-variant-numeric: tabular-nums; }
+.readout span b { font-weight: 500; }
+.energy { margin-top: 12px; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 12px; align-items: center; font-size: 13.5px; }
+.energy .track { height: 14px; background: var(--paper); border: 1px solid var(--line); border-radius: 4px; overflow: hidden; display: flex; }
+.energy .fill-e { background: var(--s); height: 100%; }
+.energy .fill-k { background: var(--v); height: 100%; }
+.legend-dot { display: inline-block; width: 10px; height: 10px; border-radius: 2px; vertical-align: middle; margin-right: 5px; }
+
+@media (max-width: 920px) {
+  .wrap { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  nav.toc { position: static; margin-bottom: 8px; }
+  nav.toc ol { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+}
+@media (max-width: 640px) {
+  .lab-canvases, .fig-row { grid-template-columns: minmax(0, 1fr); }
+  .controls { grid-template-columns: minmax(0, 1fr); }
+  .lab canvas { height: 240px; }
+  details > div { padding-left: 16px; }
+}
+</style>
+
+<div class="wrap">
+<nav class="toc" aria-label="Inhalt">
+  <p>Inhalt</p>
+  <ol>
+    <li><a href="#begriffe">Grundbegriffe</a></li>
+    <li><a href="#kreis">Kreisbewegung &amp; Kraftgesetz</a></li>
+    <li><a href="#gesetze">s-, v-, a-Gesetze</a></li>
+    <li><a href="#feder">Federpendel</a></li>
+    <li><a href="#dgl">Differentialgleichung</a></li>
+    <li><a href="#faden">Fadenpendel</a></li>
+    <li><a href="#fluessig">Flüssigkeitspendel</a></li>
+    <li><a href="#energie">Energie</a></li>
+    <li><a href="#versuch">Bestätigungsversuch</a></li>
+    <li><a href="#sekunde">Beispiel Sekundenpendel</a></li>
+    <li><a href="#uebung">Übungsaufgaben</a></li>
+    <li><a href="#formeln">Formeln &amp; Fehlerliste</a></li>
+  </ol>
+</nav>
+
+<main>
+<header>
+  <div class="eyebrow">Physik Oberstufe · 1. Klassenarbeit</div>
+  <h1>Mechanische Schwingungen</h1>
+  <p class="lead">Alles aus deiner Mitschrift, sauber geordnet und erklärt. Dazu kommt, warum jede Formel so aussieht, wie sie aussieht. Wenn du die Logik verstanden hast, musst du weniger auswendig lernen.</p>
+
+  <div class="lab" id="lab">
+    <div class="lab-canvases">
+      <canvas id="cvMech" aria-label="Animation: Ein Punkt kreist, sein Schatten und ein Federpendel bewegen sich synchron auf und ab"></canvas>
+      <canvas id="cvGraph" aria-label="Diagramme von Auslenkung, Geschwindigkeit und Beschleunigung über der Zeit"></canvas>
+    </div>
+    <div class="controls">
+      <div class="ctl"><label for="inM">Masse m <output id="outM"></output></label><input type="range" id="inM" min="0.05" max="1" step="0.05" value="0.2"></div>
+      <div class="ctl"><label for="inD">Federkonstante D <output id="outD"></output></label><input type="range" id="inD" min="2" max="40" step="0.01" value="7.89"></div>
+      <div class="ctl"><label for="inA">Amplitude ŝ <output id="outA"></output></label><input type="range" id="inA" min="0.02" max="0.2" step="0.01" value="0.1"></div>
+    </div>
+    <div class="energy">
+      <span>Energie</span>
+      <div class="track" role="img" aria-label="Aufteilung der Gesamtenergie"><div class="fill-e" id="barE"></div><div class="fill-k" id="barK"></div></div>
+      <span></span>
+      <span style="color:var(--muted)"><span class="legend-dot" style="background:var(--s)"></span>Elongationsenergie ½Ds² &nbsp; <span class="legend-dot" style="background:var(--v)"></span>kinetische Energie ½mv² &nbsp; Summe bleibt konstant</span>
+    </div>
+    <div class="lab-bar">
+      <button class="btn" id="btnPlay" type="button">Pause</button>
+      <button class="btn ghost" id="btnReset" type="button">Neu starten</button>
+      <div class="readout" id="readout"></div>
+    </div>
+  </div>
+  <p class="why">Das Labor zeigt den Versuch aus deiner Mitschrift: Der Schatten eines kreisenden Punktes bewegt sich genau wie das Federpendel. Ändere m, D und ŝ und beobachte: T hängt nur von m und D ab, nie von ŝ. Startwerte wie im Sekundenpendel-Beispiel (D = 7,89 N/m, m = 0,2 kg, also T ≈ 1 s).</p>
+</header>
+
+<!-- 1 -->
+<section id="begriffe">
+  <h2><span class="n">01</span>Grundbegriffe</h2>
+  <div class="cols">
+    <div class="box"><p class="box-title">Schwingung</p>Periodische Bewegung eines Körpers um eine Ruhelage. Der Körper bewegt sich wiederholt hin und her. Beispiele: Fadenpendel, Feder-Masse-System.</div>
+    <div class="box"><p class="box-title">Freie Schwingung</p>Nach einmaliger Anregung schwingt das System ohne weitere äußere Krafteinwirkung selbstständig weiter, und zwar mit seiner <strong>Eigenfrequenz</strong>.</div>
+    <div class="box"><p class="box-title">Ungedämpfte Schwingung</p>Idealisiert: kein Energieverlust, keine Reibung. Die Amplitude bleibt konstant. In der Realität nur näherungsweise erreichbar.</div>
+  </div>
+
+  <h3>Mechanische Schwingung: das Zusammenspiel von drei Begriffen</h3>
+  <p>Mechanische Schwingung ist die periodische Bewegung eines Körpers um seine Gleichgewichtslage. Die Rückstellkraft treibt den Körper zurück zur Ruhelage, und die Trägheit setzt die Bewegung über die Gleichgewichtslage hinaus fort.</p>
+  <ol class="steps">
+    <li><div><strong>Auslenkung:</strong> Der Körper wird aus der <strong>Gleichgewichtslage</strong> (Ort, an dem die resultierende Kraft null ist) herausbewegt.</div></li>
+    <li><div><strong>Rückstellkraft:</strong> Sie zeigt immer zur Gleichgewichtslage hin und beschleunigt den Körper dorthin.</div></li>
+    <li><div><strong>Trägheit:</strong> In der Gleichgewichtslage ist die Kraft null, aber der Körper hat seine größte Geschwindigkeit. Wegen seiner Trägheit fliegt er darüber hinaus.</div></li>
+    <li><div>Auf der anderen Seite bremst ihn die Rückstellkraft ab, bis er im <strong>Umkehrpunkt</strong> kurz stillsteht. Dann beginnt alles von vorn.</div></li>
+  </ol>
+  <div class="merke box"><p class="box-title">Merke</p>Ohne Rückstellkraft keine Rückkehr, ohne Trägheit kein Überschwingen. Für eine Schwingung braucht man beides.</div>
+
+  <h3>Die wichtigsten Größen</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Größe</th><th>Zeichen</th><th>Einheit</th><th>Bedeutung</th></tr></thead>
+    <tbody>
+      <tr><td>Elongation, Auslenkung</td><td>\(s\)</td><td>m</td><td>momentaner Abstand von der Gleichgewichtslage (mit Vorzeichen)</td></tr>
+      <tr><td>Amplitude</td><td>\(\hat s\)</td><td>m</td><td>maximale Auslenkung; das Dach ^ heißt immer „Maximalwert“</td></tr>
+      <tr><td>Periodendauer</td><td>\(T\)</td><td>s</td><td>Zeit für eine vollständige Hin- und Herbewegung</td></tr>
+      <tr><td>Frequenz <em>(Ergänzung)</em></td><td>\(f = \frac{1}{T}\)</td><td>Hz = 1/s</td><td>Schwingungen pro Sekunde</td></tr>
+      <tr><td>Kreisfrequenz, Winkelgeschwindigkeit</td><td>\(\omega = \frac{2\pi}{T}\)</td><td>1/s</td><td>wie schnell der „Kreiswinkel“ wächst</td></tr>
+      <tr><td>Richtgröße</td><td>\(D\)</td><td>N/m</td><td>Faktor im linearen Kraftgesetz; beim Federpendel = Federkonstante</td></tr>
+      <tr><td>Phasenwinkel</td><td>\(\varphi = \omega t\)</td><td>rad</td><td>Winkel des gedachten kreisenden Punktes</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- 2 -->
+<section id="kreis">
+  <h2><span class="n">02</span>Harmonische Schwingung &amp; Kreisbewegung</h2>
+  <h3>Versuch: Drehscheibe und Federpendel</h3>
+  <p>Ein Stab auf einer Drehscheibe kreist mit konstanter Winkelgeschwindigkeit. Licht projiziert seinen Schatten an einen Schirm. Daneben schwingt ein Federpendel.</p>
+  <p><strong>Beobachtung:</strong> Der Schatten bewegt sich synchron zum Federpendel. Genau das zeigt das Labor oben.</p>
+  <div class="merke box"><p class="box-title">Definition</p>Eine freie, mechanische Schwingung, die sich so verhält wie die senkrechte Projektion eines gleichförmig kreisenden Körpers, heißt <strong>harmonische Schwingung</strong>.</div>
+
+  <h3>Herleitung: Warum gilt das lineare Kraftgesetz?</h3>
+  <p>Die Idee: Wir untersuchen, welche Kraft den <em>Schatten</em> bewegt. Wenn sich das Pendel genauso bewegt, muss auf das Pendel dieselbe Art von Kraft wirken.</p>
+
+  <figure>
+    <svg viewBox="0 0 520 230" role="img" aria-label="Kreisbewegung: Punkt auf dem Kreis mit Radius r unter Winkel phi, Höhe s, Zentripetalkraft zum Mittelpunkt und ihre senkrechte Komponente F_s">
+      <line x1="20" y1="120" x2="330" y2="120" stroke="var(--muted)" stroke-dasharray="4 4"/>
+      <circle cx="140" cy="120" r="90" fill="none" stroke="var(--ink)" stroke-width="1.5"/>
+      <circle cx="140" cy="120" r="3" fill="var(--ink)"/>
+      <line x1="140" y1="120" x2="203.6" y2="56.4" stroke="var(--ink)" stroke-width="1.5"/>
+      <text x="160" y="80" font-size="15" fill="var(--ink)" font-style="italic">r</text>
+      <path d="M170 120 A30 30 0 0 0 161.2 98.8" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+      <text x="176" y="112" font-size="14" fill="var(--accent)" font-style="italic">φ</text>
+      <line x1="203.6" y1="56.4" x2="203.6" y2="120" stroke="var(--s)" stroke-width="2" stroke-dasharray="5 3"/>
+      <text x="210" y="95" font-size="15" fill="var(--s)" font-style="italic">s = r·sin φ</text>
+      <line x1="203.6" y1="56.4" x2="158" y2="102" stroke="var(--accent)" stroke-width="2.5"/>
+      <polygon points="152,108 163,103 157,97" fill="var(--accent)"/>
+      <text x="120" y="78" font-size="14" fill="var(--accent)">F<tspan font-size="10" dy="3">Z</tspan></text>
+      <line x1="203.6" y1="56.4" x2="203.6" y2="56.4" />
+      <line x1="230" y1="56.4" x2="230" y2="100" stroke="var(--a)" stroke-width="2.5"/>
+      <polygon points="230,108 225,98 235,98" fill="var(--a)"/>
+      <text x="238" y="78" font-size="14" fill="var(--a)">F<tspan font-size="10" dy="3">s</tspan></text>
+      <circle cx="203.6" cy="56.4" r="7" fill="var(--card)" stroke="var(--ink)" stroke-width="2"/>
+      <line x1="330" y1="20" x2="330" y2="220" stroke="var(--muted)" stroke-width="6" opacity=".5"/>
+      <line x1="211" y1="56.4" x2="322" y2="56.4" stroke="var(--muted)" stroke-dasharray="3 4"/>
+      <circle cx="330" cy="56.4" r="6" fill="var(--ink)"/>
+      <text x="345" y="60" font-size="13" fill="var(--muted)">Schatten auf dem Schirm</text>
+      <text x="345" y="124" font-size="13" fill="var(--muted)">Gleichgewichtslage</text>
+    </svg>
+    <figcaption>Der Punkt kreist mit Radius \(r\). Die Zentripetalkraft \(F_Z\) zeigt zum Mittelpunkt. Für den Schatten zählt nur ihre senkrechte Komponente \(F_s\).</figcaption>
+  </figure>
+
+  <ol class="steps">
+    <li><div><strong>Auslenkung des Schattens:</strong> \(s = r\cdot\sin\varphi\) &nbsp;→&nbsp; \(s \sim \sin\varphi\)
+      <div class="why">Gegenkathete im Dreieck aus Radius, Höhe und Grundlinie.</div></div></li>
+    <li><div><strong>Rückstellkraft:</strong> \(F_s = F_Z\cdot\sin\varphi\) &nbsp;→&nbsp; \(F_s \sim \sin\varphi\)
+      <div class="why">Senkrechte Komponente der Zentripetalkraft, gleiches Dreieck, nur mit Kräften.</div></div></li>
+    <li><div>Beide sind proportional zu \(\sin\varphi\). Also gilt \(F_s \sim s\).<br>
+      Genauer: \(\sin\varphi = \dfrac{F_s}{F_Z} = -\dfrac{s}{r}\). Das Minus steht da, weil \(F_s\) nach unten zeigt, wenn \(s\) oben ist.</div></li>
+    <li><div>Auflösen und die Zentripetalkraft \(F_Z = \frac{m v^2}{r}\) mit \(v = \frac{2\pi r}{T}\) einsetzen:
+      <div class="math-scroll">\[F_s = -F_Z\cdot\frac{s}{r} = -\frac{m v^2}{r}\cdot\frac{s}{r} = -\frac{m\left(\frac{2\pi r}{T}\right)^2}{r}\cdot\frac{s}{r} = -\frac{4\pi^2 m}{T^2}\cdot s\]</div>
+      <div class="why">Das \(r^2\) im Zähler kürzt sich gegen \(r\cdot r\) im Nenner. Übrig bleibt ein konstanter Faktor mal \(s\).</div></div></li>
+  </ol>
+
+  <div class="merke box"><p class="box-title">Ergebnis 1: lineares Kraftgesetz</p>
+    <div class="math-scroll">\[F = -D\cdot s \qquad\text{mit der Richtgröße}\qquad D = \frac{4\pi^2 m}{T^2} = m\,\omega^2\]</div>
+    Eine Schwingung, bei der die Rückstellkraft proportional zur Auslenkung ist, ist eine harmonische Schwingung.
+    <ul style="margin-top:8px">
+      <li><strong>Minuszeichen:</strong> Kraft und Auslenkung zeigen in entgegengesetzte Richtungen. Bist du oben (\(s&gt;0\)), zieht die Kraft nach unten (\(F&lt;0\)).</li>
+      <li>Die maximale Auslenkung heißt <strong>Amplitude</strong> \(\hat s\).</li>
+    </ul>
+  </div>
+
+  <h3>Winkelgeschwindigkeit</h3>
+  <p class="math-scroll">\[\omega = \frac{\Delta\varphi}{\Delta t} = \frac{\varphi_2-\varphi_1}{t_2-t_1}\qquad\text{bzw.}\qquad \omega = \frac{\varphi}{t},\ \text{wenn } \varphi_0 = 0 \text{ bei } t_0=0 \quad\Rightarrow\quad \varphi = \omega t\]</p>
+  <p>Eine volle Umdrehung (\(2\pi\)) dauert genau \(T\), deshalb gilt \(\omega = \frac{2\pi}{T}\). Diese Beziehung brauchst du in fast jeder Aufgabe.</p>
+</section>
+
+<!-- 3 -->
+<section id="gesetze">
+  <h2><span class="n">03</span>Bewegungsgesetze der harmonischen Schwingung</h2>
+  <p>Setzt man \(\varphi = \omega t\) in \(s = \hat s\sin\varphi\) ein, erhält man das t-s-Gesetz. Geschwindigkeit und Beschleunigung bekommst du durch <strong>Ableiten</strong>: \(v = s'\), \(a = v' = s''\).</p>
+  <p class="why">Ableitungsregeln dafür: \((\sin x)' = \cos x\), \((\cos x)' = -\sin x\). Mit Kettenregel kommt bei jeder Ableitung ein Faktor \(\omega\) dazu.</p>
+
+  <div class="law s box"><p class="box-title cs">t-s-Gesetz (Zeit-Ort)</p>
+    <div class="math-scroll">\[s(t) = \hat s\cdot\sin(\omega t)\]</div></div>
+  <div class="law v box"><p class="box-title cv">t-v-Gesetz (Zeit-Geschwindigkeit)</p>
+    <div class="math-scroll">\[v(t) = s'(t) = \underbrace{\hat s\,\omega}_{\hat v}\cdot\cos(\omega t) = \hat v\cdot\cos(\omega t)\]</div></div>
+  <div class="law a box"><p class="box-title ca">t-a-Gesetz (Zeit-Beschleunigung)</p>
+    <div class="math-scroll">\[a(t) = s''(t) = -\underbrace{\hat s\,\omega^2}_{\hat a}\cdot\sin(\omega t) = -\hat a\cdot\sin(\omega t)\]</div></div>
+  <p class="why">Diese Formen gelten, wenn \(s = 0\) zur Zeit \(t = 0\) ist und der Körper sich dabei in positive Richtung bewegt.</p>
+
+  <div class="merke box"><p class="box-title">Maximalwerte</p>
+    <div class="math-scroll">\[\hat v = \hat s\cdot\omega \qquad\qquad \hat a = \hat s\cdot\omega^2 = \hat v\cdot\omega\]</div></div>
+
+  <h3>Wer ist wann maximal? (sehr klausurrelevant)</h3>
+  <p>Vergleiche \(a(t) = -\omega^2\, s(t)\): Die Beschleunigung ist immer das negative Vielfache der Auslenkung. Das ist nichts anderes als das lineare Kraftgesetz, denn \(F = m a = -m\omega^2 s = -Ds\).</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Ort</th><th class="cs">Auslenkung s</th><th class="cv">Geschwindigkeit v</th><th class="ca">Beschleunigung a</th></tr></thead>
+    <tbody>
+      <tr><td>Gleichgewichtslage</td><td>0</td><td><strong>maximal</strong> (±v̂)</td><td>0</td></tr>
+      <tr><td>oberer Umkehrpunkt</td><td>+ŝ</td><td>0</td><td><strong>maximal</strong>, nach unten (−â)</td></tr>
+      <tr><td>unterer Umkehrpunkt</td><td>−ŝ</td><td>0</td><td><strong>maximal</strong>, nach oben (+â)</td></tr>
+    </tbody>
+  </table></div>
+  <p>Im Diagramm heißt das: Die v-Kurve ist gegenüber der s-Kurve um eine Viertelperiode \(\frac{T}{4}\) verschoben. Die a-Kurve ist das gespiegelte s-Diagramm.</p>
+
+  <div class="merke box"><p class="box-title">Ergebnis 3: zwei Erkennungsmerkmale</p>
+    Eine harmonische Schwingung liegt vor, wenn
+    <ul><li>das lineare Kraftgesetz \(F = -D s\) gilt <strong>oder</strong></li>
+    <li>die Bewegungsgleichungen mit einem Sinus- bzw. Kosinusterm beschrieben werden können.</li></ul>
+  </div>
+
+  <h3>Anfangsbedingungen: Was, wenn der Körper nicht in der Mitte startet?</h3>
+  <p>Das „normale“ \(s(t)=\hat s\sin(\omega t)\) beginnt bei \(s=0\) und läuft nach oben. Startet der Körper woanders, verschiebst du die Kurve um eine Zeit \(t_0\):</p>
+  <div class="math-scroll">\[s(t) = \hat s\cdot\sin\big(\omega\,(t - t_0)\big)\]</div>
+  <div class="tbl"><table>
+    <thead><tr><th>Start bei t = 0</th><th>Verschiebung</th><th>gleichwertige Form</th></tr></thead>
+    <tbody>
+      <tr><td>Gleichgewichtslage, Bewegung nach oben</td><td>\(t_0 = 0\)</td><td>\(\hat s\sin(\omega t)\)</td></tr>
+      <tr><td>oben losgelassen (\(s=+\hat s\))</td><td>\(t_0 = -\frac{T}{4}\)</td><td>\(\hat s\cos(\omega t)\)</td></tr>
+      <tr><td>unten losgelassen (\(s=-\hat s\))</td><td>\(t_0 = +\frac{T}{4}\)</td><td>\(-\hat s\cos(\omega t)\)</td></tr>
+    </tbody>
+  </table></div>
+  <p class="why">Warum \(+\frac{T}{4}\) beim Start unten? Die normale Sinuskurve ist bei \(t = \frac{3T}{4}\) unten. Verschiebst du sie um \(\frac T4\) nach rechts, liegt ihr Tiefpunkt bei \(t = \frac{3T}{4}+\frac{T}{4} = T\), also gleichwertig bei \(t=0\). Genau das passiert im Sekundenpendel-Beispiel.</p>
+  <div class="warn box"><p class="box-title">Taschenrechner</p>Bei \(\sin(\omega t)\) steht im Argument ein Winkel im <strong>Bogenmaß</strong>. Stell den Rechner auf <strong>RAD</strong>, sonst ist jedes Ergebnis falsch.</div>
+</section>
+
+<!-- 4 -->
+<section id="feder">
+  <h2><span class="n">04</span>Das Federpendel</h2>
+  <p>Ein Körper hängt an einer Feder. In der <strong>Ruhelage</strong> ist die Feder schon um \(s_0\) gedehnt. Von dort aus schwingt er zwischen den <strong>Umkehrpunkten</strong>.</p>
+
+  <h3>Kräfte in den fünf Situationen</h3>
+  <p>Vorzeichen: <strong>nach oben positiv</strong>. Auf den Körper wirken die Federkraft \(F_F = D\cdot(\text{Dehnung})\) nach oben und die Gewichtskraft \(F_G\) nach unten.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Situation</th><th>Rechnung</th><th>Bedeutung</th></tr></thead>
+    <tbody>
+      <tr><td>1, 3: Gleichgewichtslage</td><td>\(F_{res} = D s_0 - F_G = 0\)</td><td>\(\Rightarrow D\cdot s_0 = F_G\)<br>Federkraft und Gewicht heben sich auf.</td></tr>
+      <tr><td>4: um \(s_4\) unter der GGL</td><td>\(F_{res} = D(s_0+s_4) - D s_0 = +D s_4\)</td><td>Feder stärker gedehnt, Kraft zeigt nach oben</td></tr>
+      <tr><td>5: um \(s_5\) über der GGL</td><td>\(F_{res} = D(s_0-s_5) - D s_0 = -D s_5\)</td><td>Feder weniger gedehnt, Kraft zeigt nach unten</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>Der Trick:</strong> Weil \(F_G = D s_0\), kann man \(F_G\) immer durch \(D s_0\) ersetzen, und es kürzt sich weg. Übrig bleibt nur die <em>zusätzliche</em> Federkraft. Unter der GGL ist die Auslenkung \(s=-s_4\) und die Kraft \(+Ds_4\). In beiden Fällen gilt also \(F_{res} = -D\cdot s\).</p>
+
+  <div class="merke box"><p class="box-title">Ergebnisse Federpendel</p>
+    <ol>
+      <li>Die Rückstellkraft ist die resultierende Kraft: \(F_{Rück} = F_{res}\).</li>
+      <li>Das Federpendel schwingt harmonisch, da das lineare Kraftgesetz \(F_{Rück} = -D s\) gilt. Das folgt aus dem Hookeschen Gesetz.</li>
+      <li>Die Richtgröße \(D\) ist beim Federpendel die Federkonstante.</li>
+      <li>Periodendauer: <div class="math-scroll">\[T = 2\pi\sqrt{\frac{m}{D}} = \text{konstant}\]</div></li>
+      <li>\(T\) hängt <strong>nur</strong> von der Federkonstante \(D\) und der Masse \(m\) ab, also <strong>nicht</strong> von der Amplitude und auch nicht von \(g\).</li>
+    </ol>
+  </div>
+  <p><strong>Messkurven:</strong> Trägt man \(T\) über \(m\) auf, ergibt sich eine Wurzelkurve. Trägt man \(T\) über \(\sqrt{m/D}\) auf, ergibt sich eine Ursprungsgerade mit Steigung \(2\pi\). Also gilt \(T \sim \sqrt m\).</p>
+  <p class="why">Folgerung für die Klausur: Vierfache Masse ergibt doppelte Periodendauer (\(\sqrt 4 = 2\)). Doppelte Masse ergibt das \(\sqrt2 \approx 1{,}41\)-fache.</p>
+</section>
+
+<!-- 5 -->
+<section id="dgl">
+  <h2><span class="n">05</span>Die Differentialgleichung der ungedämpften Schwingung</h2>
+  <p>Bisher haben wir die Formel für \(T\) aus der Kreisbewegung „geborgt“. Jetzt leiten wir sie direkt aus Newton ab. Das ist der eleganteste Weg.</p>
+  <ol class="steps">
+    <li><div><strong>Zwei Ausdrücke für dieselbe Kraft:</strong> Rückstellkraft (Kraftgesetz) = resultierende Kraft (Newton, \(F = m\cdot a\)):
+      <div class="math-scroll">\[F_{Rück} = F_{res}\quad\Rightarrow\quad -D\cdot s(t) = m\cdot a(t) = m\cdot s''(t)\]</div>
+      <div class="why">Das ist eine Differentialgleichung (DGL): Sie enthält die gesuchte Funktion \(s(t)\) <em>und</em> ihre zweite Ableitung. Gesucht ist eine Funktion, die sie erfüllt.</div></div></li>
+    <li><div><strong>Ansatz einsetzen:</strong> \(s(t) = \hat s\sin(\omega t)\) und \(s''(t) = -\hat s\,\omega^2\sin(\omega t)\):
+      <div class="math-scroll">\[-D\cdot\hat s\sin(\omega t) = -m\cdot\hat s\,\omega^2\sin(\omega t)\]</div></div></li>
+    <li><div><strong>Kürzen:</strong> \(-\hat s\sin(\omega t)\) steht auf beiden Seiten und fällt weg:
+      <div class="math-scroll">\[D = m\,\omega^2 \quad\Leftrightarrow\quad \omega = \sqrt{\frac{D}{m}}\]</div></div></li>
+    <li><div><strong>Mit \(T = \frac{2\pi}{\omega}\):</strong>
+      <div class="math-scroll">\[T = 2\pi\sqrt{\frac{m}{D}}\qquad\text{bzw. für die Richtgröße}\qquad D = \frac{4\pi^2 m}{T^2} = m\,\omega^2\]</div></div></li>
+  </ol>
+  <div class="merke box"><p class="box-title">Ergebnis</p>
+    Der Ansatz \(s(t) = \hat s\sin(\omega t)\) löst die DGL genau dann, wenn \(\omega = \sqrt{D/m}\). Dann ist \(T = 2\pi\sqrt{m/D}\) konstant.<br>
+    Bei harmonischen Schwingungen ist \(T\) unabhängig von der Auslenkung. Die Bewegungsgleichungen der ungedämpften mechanischen Schwingung sind dieselben wie die der harmonischen Schwingung.</div>
+  <p class="why">Warum fällt \(\hat s\) heraus? Weil beide Seiten der DGL linear in \(s\) sind. Deshalb ist \(T\) von der Amplitude unabhängig, und das gilt für jede Schwingung mit linearem Kraftgesetz.</p>
+  <div class="box"><p class="box-title">Allgemeines Rezept (gilt für jedes harmonische System)</p>
+    <ol style="margin:0"><li>Rückstellkraft aufschreiben und in die Form \(F = -D\cdot s\) bringen.</li>
+    <li>Ablesen, was \(D\) ist. \(D\) muss konstant sein!</li>
+    <li>Einsetzen in \(T = 2\pi\sqrt{m/D}\). Dabei ist \(m\) die gesamte bewegte Masse.</li></ol>
+    So funktionieren Fadenpendel und Flüssigkeitspendel unten auch.</div>
+</section>
+
+<!-- 6 -->
+<section id="faden">
+  <h2><span class="n">06</span>Das Fadenpendel</h2>
+  <div class="fig-row">
+    <figure>
+      <svg viewBox="0 0 280 290" role="img" aria-label="Fadenpendel ausgelenkt um alpha: Gewichtskraft zerlegt in Komponente entlang des Fadens und tangentiale Rückstellkraft">
+        <rect x="100" y="8" width="80" height="12" fill="var(--muted)"/>
+        <line x1="140" y1="20" x2="140" y2="250" stroke="var(--muted)" stroke-dasharray="4 4"/>
+        <line x1="140" y1="20" x2="210" y2="170" stroke="var(--ink)" stroke-width="1.5"/>
+        <path d="M140 70 A50 50 0 0 0 161 65.3" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+        <text x="143" y="88" font-size="14" fill="var(--accent)" font-style="italic">α</text>
+        <!-- F_G -->
+        <line x1="210" y1="170" x2="210" y2="262" stroke="var(--s)" stroke-width="2.5"/>
+        <polygon points="210,272 205,261 215,261" fill="var(--s)"/>
+        <text x="216" y="262" font-size="14" fill="var(--s)">F<tspan font-size="10" dy="3">G</tspan></text>
+        <!-- radial component along thread outward: direction (70,150)/165.5 ; |F_G|*cos(a) ; a=25° -> 100*0.906=90.6 -->
+        <line x1="210" y1="170" x2="248.3" y2="252.1" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <!-- tangential component: perpendicular, toward rest: length 100*sin25=42.3 dir (-150,70)/165.5 -->
+        <line x1="210" y1="170" x2="178" y2="185" stroke="var(--a)" stroke-width="2.5"/>
+        <polygon points="171,188.5 180,180 183,190" fill="var(--a)"/>
+        <text x="150" y="208" font-size="14" fill="var(--a)">F<tspan font-size="10" dy="3">R</tspan></text>
+        <line x1="171.7" y1="187.9" x2="210" y2="270" stroke="var(--muted)" stroke-dasharray="2 3"/>
+        <line x1="248.3" y1="252.1" x2="210" y2="270" stroke="var(--muted)" stroke-dasharray="2 3"/>
+        <!-- thread force -->
+        <line x1="210" y1="170" x2="183" y2="112" stroke="var(--accent)" stroke-width="2.5"/>
+        <polygon points="179,103 188,111 178,115" fill="var(--accent)"/>
+        <text x="190" y="118" font-size="14" fill="var(--accent)">F<tspan font-size="10" dy="3">Z</tspan></text>
+        <path d="M210 205 A35 35 0 0 0 225 201.7" fill="none" stroke="var(--accent)" stroke-width="1.2"/>
+        <text x="214" y="222" font-size="12" fill="var(--accent)" font-style="italic">α</text>
+        <circle cx="210" cy="170" r="13" fill="var(--card)" stroke="var(--ink)" stroke-width="2"/>
+        <text x="40" y="140" font-size="13" fill="var(--muted)">Länge l</text>
+      </svg>
+      <figcaption>Die Gewichtskraft wird zerlegt: entlang des Fadens (gestrichelt) und senkrecht dazu, tangential zur Bahn. Die tangentiale Komponente ist die Rückstellkraft \(F_R\). Der Winkel zwischen \(F_G\) und Faden ist wieder \(\alpha\).</figcaption>
+    </figure>
+    <div>
+      <p>Im rechtwinkligen Kraftdreieck ist \(F_R\) die Gegenkathete zu \(\alpha\), \(F_G\) die Hypotenuse:</p>
+      <div class="math-scroll">\[\sin\alpha = \frac{G}{H} = \frac{F_R}{F_G}\]</div>
+      <div class="math-scroll">\[F_R = -m\cdot g\cdot\sin\alpha\]</div>
+      <p>Das Minus steht da, weil \(F_R\) immer zur Mitte zeigt, also entgegen der Auslenkung.</p>
+      <p class="why">Die Fadenkomponente von \(F_G\) wird vom Faden aufgenommen. Sie bewegt den Körper nicht entlang der Bahn.</p>
+    </div>
+  </div>
+
+  <div class="warn box"><p class="box-title">sin oder tan? (zweite Skizze in deiner Mitschrift)</p>
+    In deiner Mitschrift steht rechts auch \(F_R = \tan\alpha\cdot m g\). Diese Zerlegung gilt, wenn Fadenkraft und Gewichtskraft zusammen eine <strong>waagerechte</strong> Kraft ergeben, zum Beispiel wenn man das Pendel waagerecht ausgelenkt festhält. Für die Rückstellkraft <em>entlang der Bahn</em> beim schwingenden Pendel gilt \(\sin\alpha\). Für kleine Winkel sind \(\sin\alpha\) und \(\tan\alpha\) fast gleich, deshalb ist der Unterschied klein. Klär im Zweifel mit deiner Lehrkraft, welche Variante sie in der Klausur sehen will.</div>
+
+  <h3>Kräfte entlang des Fadens (Zentripetalkraft)</h3>
+  <p>Der Körper bewegt sich auf einer Kreisbahn, deshalb braucht er eine Zentripetalkraft \(F_Z\) zum Aufhängepunkt hin. Sie ist die Differenz aus Fadenzugkraft \(F_{Zug}\) und der radialen Komponente der Gewichtskraft \(F_{rad}\):</p>
+  <div class="math-scroll">\[F_Z = F_{Zug} - F_{rad}\qquad\Leftrightarrow\qquad F_{Zug} = F_{rad} + F_Z\]</div>
+  <p class="why">Der Faden muss also mehr halten als nur das Gewicht. Am tiefsten Punkt ist die Geschwindigkeit am größten, dort ist \(F_Z\) und damit die Fadenkraft am größten.</p>
+
+  <div class="extra box"><p class="box-title">Ergänzung, nicht in deiner Mitschrift: Periodendauer des Fadenpendels</p>
+    <p>Wegen \(\sin\alpha\) ist das Kraftgesetz eigentlich nicht linear. Für <strong>kleine Winkel</strong> (etwa unter 10°) gilt aber \(\sin\alpha\approx\alpha\) (im Bogenmaß) und der Bogen ist \(s = l\cdot\alpha\):</p>
+    <div class="math-scroll">\[F_R \approx -m g\cdot\frac{s}{l} = -\underbrace{\frac{m g}{l}}_{D}\cdot s \quad\Rightarrow\quad T = 2\pi\sqrt{\frac{m}{D}} = 2\pi\sqrt{\frac{l}{g}}\]</div>
+    <p style="margin:0">Die Masse kürzt sich heraus: \(T\) hängt nur von der Fadenlänge und \(g\) ab. Falls das im Unterricht dran war, kann es abgefragt werden.</p></div>
+</section>
+
+<!-- 7 -->
+<section id="fluessig">
+  <h2><span class="n">07</span>Flüssigkeitspendel (U-Rohr)</h2>
+  <div class="fig-row">
+    <figure>
+      <svg viewBox="0 0 240 250" role="img" aria-label="U-Rohr: Flüssigkeit rechts um s gestiegen, links um s gesunken, Höhenunterschied 2s">
+        <path d="M60 20 V170 A60 60 0 0 0 180 170 V20" fill="none" stroke="var(--ink)" stroke-width="22" stroke-linecap="butt" opacity=".18"/>
+        <path d="M60 130 V170 A60 60 0 0 0 180 170 V70" fill="none" stroke="var(--accent)" stroke-width="18" opacity=".55"/>
+        <rect x="171" y="70" width="18" height="60" fill="var(--s)" opacity=".55"/>
+        <line x1="40" y1="100" x2="215" y2="100" stroke="var(--muted)" stroke-dasharray="4 4"/>
+        <line x1="40" y1="70" x2="215" y2="70" stroke="var(--v)" stroke-dasharray="3 3"/>
+        <line x1="40" y1="130" x2="215" y2="130" stroke="var(--v)" stroke-dasharray="3 3"/>
+        <text x="218" y="74" font-size="13" fill="var(--v)">+s</text>
+        <text x="218" y="104" font-size="13" fill="var(--muted)">0</text>
+        <text x="218" y="134" font-size="13" fill="var(--v)">−s</text>
+        <text x="110" y="105" font-size="13" fill="var(--s)">2s</text>
+        <text x="80" y="242" font-size="13" fill="var(--muted)">Querschnitt A, Dichte ρ, Gesamtlänge L</text>
+      </svg>
+      <figcaption>Steigt die Flüssigkeit rechts um \(s\), sinkt sie links um \(s\). Die rot markierte Säule der Länge \(2s\) ist „zu viel“. Ihr Gewicht beschleunigt bzw. bremst die gesamte Flüssigkeitssäule.</figcaption>
+    </figure>
+    <div>
+      <p><strong>Kraftgesetz:</strong> Rückstellkraft = Gewicht der überstehenden Säule:</p>
+      <div class="math-scroll">\[\begin{aligned}F_{Rück} &= -m_{2s}\cdot g = -\rho\cdot V_{2s}\cdot g\\ &= -\rho\cdot A\cdot 2s\cdot g = -D\cdot s\end{aligned}\]</div>
+      <p>mit \(D = 2\rho A g\), also konstant. Damit gilt \(F_{Rück}\sim s\): harmonisch!</p>
+    </div>
+  </div>
+  <p><strong>Periodendauer:</strong> Bewegt wird die <em>gesamte</em> Flüssigkeit, \(m_{ges} = \rho\cdot V = \rho\cdot A\cdot L\):</p>
+  <div class="math-scroll">\[T = 2\pi\sqrt{\frac{m_{ges}}{D}} = 2\pi\sqrt{\frac{\rho A L}{2\rho A g}} = 2\pi\sqrt{\frac{L}{2g}} = \text{konstant}\]</div>
+  <p class="why">Dichte und Querschnitt kürzen sich heraus. Eine typische Falle: Für \(D\) zählt nur die Säule \(2s\), für \(m\) aber die ganze Flüssigkeit.</p>
+</section>
+
+<!-- 8 -->
+<section id="energie">
+  <h2><span class="n">08</span>Energie harmonisch schwingender Systeme</h2>
+  <h3>Energiebetrachtung am Federpendel</h3>
+  <ol>
+    <li>Ruht der Körper in der Gleichgewichtslage, ist \(E_{kin} = 0\).</li>
+    <li>Die Spannenergie der Feder, die schon in der Gleichgewichtslage gespannt ist, wird nicht berücksichtigt, da sie konstant ist.</li>
+    <li>Die <strong>Elongationsenergie</strong> ist die Arbeit, die man gegen die Rückstellkraft \(F = -Ds\) verrichten muss, um von 0 bis \(s\) auszulenken:
+      <div class="math-scroll">\[E_{Elong} = \tfrac12\,D\,s^2\]</div>
+      <span class="why">Warum ½? Die Kraft wächst linear von 0 auf \(Ds\). Die Arbeit ist die Dreiecksfläche unter der F-s-Geraden: \(\frac12\cdot s\cdot Ds\).</span></li>
+    <li>Wegen des Energieerhaltungssatzes bleibt die Gesamtenergie im reibungsfreien Fall erhalten. \(E_{Elong}\) wird periodisch in \(E_{kin}\) umgewandelt und zurück.</li>
+    <li>Bei maximaler Auslenkung: \(E_{Elong}\) maximal, \(E_{kin} = 0\).</li>
+    <li>In der Gleichgewichtslage: \(E_{Elong} = 0\), \(E_{kin}\) maximal.</li>
+  </ol>
+
+  <div class="merke box"><p class="box-title">Ergebnis: reibungsfreie harmonische Schwingung</p>
+    <div class="math-scroll">\[E_{ges} = E_{Elong}(t) + E_{kin}(t) = \tfrac12 D\,s(t)^2 + \tfrac12 m\,v(t)^2 = \tfrac12 D\hat s^2 = \tfrac12 m\hat v^2 = \text{konstant}\]</div>
+    <ul style="margin:0"><li>Kennzeichen jeder mechanischen Schwingung: das periodische Hin- und Herpendeln zwischen zwei Energieformen.</li>
+    <li>Bei ungedämpften Schwingungen ist die Summe beider Energien zeitlich konstant.</li></ul></div>
+
+  <h3>Beweis: \(E_{ges}\) ist wirklich konstant</h3>
+  <p>Werkzeuge: \(\sin^2 x + \cos^2 x = 1\), \(\hat v = \hat s\,\omega\), \(D = m\omega^2\).</p>
+  <div class="math-scroll">\[\begin{aligned}
+  E_{ges} &= \tfrac12 D\big(\hat s\sin(\omega t)\big)^2 + \tfrac12 m\big(\hat v\cos(\omega t)\big)^2\\
+  &= \tfrac12\big(D\hat s^2\sin^2(\omega t) + m\hat v^2\cos^2(\omega t)\big)\\
+  &= \tfrac12\big(m\omega^2\hat s^2\sin^2(\omega t) + m\hat s^2\omega^2\cos^2(\omega t)\big)\\
+  &= \tfrac12 m\omega^2\hat s^2\underbrace{\big(\sin^2(\omega t)+\cos^2(\omega t)\big)}_{=1}\\
+  &= \tfrac12 m\hat v^2 = \tfrac12 D\hat s^2
+  \end{aligned}\]</div>
+  <p class="why">Die Idee: \(D\) und \(\hat v^2\) so umschreiben, dass vor \(\sin^2\) und \(\cos^2\) derselbe Faktor steht. Dann ausklammern und den trigonometrischen Pythagoras anwenden.</p>
+
+  <h3>Zeitlicher Verlauf der Teilenergien</h3>
+  <p>\(E_{Elong}\) ist maximal, wenn \(|s|\) maximal ist. \(E_{kin}\) ist maximal, wenn \(|v|\) maximal ist. Beide Kurven liegen immer zwischen 0 und \(E_{ges}\) und ergänzen sich zu jeder Zeit zu \(E_{ges}\).</p>
+  <div class="warn box"><p class="box-title">Achtung beim Zeichnen</p>Die Energiekurven schwingen mit der <strong>halben Periodendauer \(T/2\)</strong>, also doppelt so schnell wie \(s\). Grund: Die Energie hängt von \(s^2\) ab, und \(s^2\) ist oben und unten gleich groß. Energien sind nie negativ.</div>
+
+  <h3>Feder-Schwere-Pendel (senkrecht hängend)</h3>
+  <div class="math-scroll">\[E_{ges} = E_{kin} + E_{Spann} + E_{Lage} = E_{kin}(t) + \tfrac12 D\,s(t)^2 + \text{konstant}\]</div>
+  <p class="why">Warum geht das? Die Schwerkraft verschiebt nur die Gleichgewichtslage um \(s_0\). Misst man \(s\) ab der neuen GGL, fassen sich Spann- und Lageenergie zu \(\frac12 Ds^2\) plus einem konstanten Rest zusammen. Konstanten ändern an der Schwingung nichts.</p>
+</section>
+
+<!-- 9 -->
+<section id="versuch">
+  <h2><span class="n">09</span>Bestätigungsversuch mit Messwerterfassung</h2>
+  <p>Die Bewegung eines Federpendels wird mit einem Messwerterfassungssystem aufgezeichnet: s(t), v(t), a(t) und das Elongation-Kraft-Diagramm.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Beobachtung</th><th>Folgerung</th></tr></thead>
+    <tbody>
+      <tr><td>Die Bewegungsdiagramme sind Schaubilder trigonometrischer Funktionen.</td><td>Die Federschwingung ist eine harmonische Schwingung.</td></tr>
+      <tr><td>Das Elongation-Kraft-Diagramm ist eine Gerade (fallend, durch den Ursprung).</td><td>Das lineare Kraftgesetz ist erfüllt, also ist die Schwingung harmonisch. Die Steigung ist \(-D\).</td></tr>
+      <tr><td>Bei maximaler Auslenkung ist die Geschwindigkeit null.</td><td rowspan="2">passt zu Abschnitt 3: v-Kurve um T/4 verschoben</td></tr>
+      <tr><td>Bei maximaler Auslenkung ist die Beschleunigung maximal.</td></tr>
+      <tr><td>In der Gleichgewichtslage ist die Geschwindigkeit maximal.</td><td rowspan="2">F = 0 in der GGL, also a = 0</td></tr>
+      <tr><td>In der Gleichgewichtslage ist die Beschleunigung null.</td></tr>
+      <tr><td>Die gemessene Periodendauer entspricht dem theoretischen Wert \(2\pi\sqrt{m/D}\).</td><td>Theorie bestätigt</td></tr>
+    </tbody>
+  </table></div>
+  <p class="why">Das v-s-Diagramm (Geschwindigkeit über Ort) aus der Messung ergibt eine geschlossene Ellipse, weil \(\left(\frac{s}{\hat s}\right)^2 + \left(\frac{v}{\hat v}\right)^2 = 1\). Das ist wieder \(\sin^2+\cos^2=1\).</p>
+</section>
+
+<!-- 10 -->
+<section id="sekunde">
+  <h2><span class="n">10</span>Beispielaufgabe: Sekundenpendel</h2>
+  <p>Ein Federpendel (\(D \approx 7{,}89\ \tfrac{\text{N}}{\text{m}}\)) schwingt harmonisch.</p>
+
+  <details open><summary>1. Masse für T = 1 s</summary><div>
+    <p>Gegeben: \(D = 7{,}89\ \frac{\text N}{\text m}\), \(T = 1\ \text s\). Gesucht: \(m\). Die Formel nach \(m\) umstellen:</p>
+    <div class="math-scroll">\[T = 2\pi\sqrt{\tfrac{m}{D}}\ \Rightarrow\ \frac{T}{2\pi} = \sqrt{\tfrac mD}\ \Rightarrow\ m = D\left(\frac{T}{2\pi}\right)^2 = 7{,}89\,\tfrac{\text N}{\text m}\cdot\left(\frac{1\,\text s}{2\pi}\right)^2 \approx 0{,}20\ \text{kg}\]</div>
+    <p class="why">Einheiten: \(\frac{\text N}{\text m}\cdot\text s^2 = \frac{\text{kg}\cdot\text m}{\text s^2\cdot\text m}\cdot\text s^2 = \text{kg}\). ✓</p>
+  </div></details>
+
+  <details open><summary>2. t-s-Gesetz, Start 0,1 m unten, Ort nach 2,7 s</summary><div>
+    <p>Das Pendel wird um 0,1 m nach <strong>unten</strong> ausgelenkt und bei \(t = 0\) losgelassen. Positive Richtung ist oben.</p>
+    <ul>
+      <li>Amplitude \(\hat s = 0{,}1\ \text m\), \(\omega = \frac{2\pi}{T} = \frac{2\pi}{1\,\text s}\)</li>
+      <li>Start im unteren Umkehrpunkt, also Verschiebung um \(t_0 = \frac T4 = 0{,}25\ \text s\) (siehe Abschnitt 3)</li>
+    </ul>
+    <div class="math-scroll">\[s(t) = \hat s\sin\big(\omega(t-t_0)\big) = 0{,}1\,\text m\cdot\sin\!\Big(\tfrac{2\pi}{1\,\text s}(t-0{,}25\,\text s)\Big) = 0{,}1\,\text m\cdot\sin\!\Big(\tfrac{2\pi}{1\,\text s}\,t - \tfrac{\pi}{2}\Big)\]</div>
+    <p>Gleichwertig und einfacher: \(s(t) = -0{,}1\,\text m\cdot\cos\!\big(\frac{2\pi}{1\,\text s}\,t\big)\).</p>
+    <div class="math-scroll">\[s(2{,}7\,\text s) = 0{,}1\,\text m\cdot\sin\!\Big(2\pi\cdot 2{,}7 - \tfrac\pi2\Big) \approx 0{,}031\ \text m\]</div>
+    <p>Der Körper ist etwa 3,1 cm <strong>oberhalb</strong> der Gleichgewichtslage.</p>
+    <p class="why">Plausibilitätscheck: 2,7 s sind 2 volle Perioden plus 0,7 s. Nach 0,5 s ist er oben (+0,1 m), nach 0,75 s wieder in der Mitte. Bei 0,7 s ist er also kurz vor der Mitte, noch etwas oben und auf dem Weg nach unten. ✓</p>
+    <p class="why">Skizze t-s für 0 ≤ t ≤ 3 s: Start bei −0,1, drei volle Perioden, Nulldurchgänge bei 0,25 s, 0,75 s, 1,25 s, …, Hochpunkte bei 0,5 s, 1,5 s, 2,5 s.</p>
+  </div></details>
+
+  <details open><summary>3. Maximale Geschwindigkeit</summary><div>
+    <div class="math-scroll">\[\hat v = \hat s\,\omega = 0{,}1\,\text m\cdot\frac{2\pi}{1\,\text s} = \frac{\pi}{5}\,\frac{\text m}{\text s} \approx 0{,}63\ \frac{\text m}{\text s}\]</div>
+  </div></details>
+
+  <details open><summary>4. t-v-Gesetz und Geschwindigkeit bei 2,7 s</summary><div>
+    <p>Ableiten von \(s(t)\) mit Kettenregel:</p>
+    <div class="math-scroll">\[v(t) = \hat s\,\omega\cos\big(\omega(t-t_0)\big) = 0{,}1\,\text m\cdot\tfrac{2\pi}{1\,\text s}\cdot\cos\!\Big(\tfrac{2\pi}{1\,\text s}\,t-\tfrac\pi2\Big)\]</div>
+    <div class="math-scroll">\[v(2{,}7\,\text s) \approx -0{,}60\ \tfrac{\text m}{\text s}\]</div>
+    <p>Der Betrag ist 0,60 m/s. Das <strong>negative</strong> Vorzeichen heißt: Der Körper bewegt sich nach unten. Das passt zum Check in Teil 2.</p>
+    <p class="why">Skizze t-v: Start bei v = 0, Kurve beginnt nach oben (er wird ja nach oben beschleunigt), Maximum \(\frac\pi5\) bei 0,25 s, Minimum \(-\frac\pi5\) bei 0,75 s.</p>
+  </div></details>
+
+  <details open><summary>5. Maximale Beschleunigung</summary><div>
+    <div class="math-scroll">\[\hat a = \hat s\,\omega^2 = 0{,}1\,\text m\cdot\left(\frac{2\pi}{1\,\text s}\right)^2 \approx 3{,}95\ \frac{\text m}{\text s^2}\]</div>
+  </div></details>
+</section>
+
+<!-- 11 -->
+<section id="uebung">
+  <h2><span class="n">11</span>Übungsaufgaben zum Testen</h2>
+  <p>Erst selbst rechnen, dann aufklappen. Die Aufgaben sind neu und im Stil deiner Mitschrift.</p>
+
+  <details><summary>A · Federpendel komplett <span class="tag">T, ω, v̂, â, E</span></summary><div>
+    <p><em>Ein Körper (m = 0,5 kg) schwingt an einer Feder (D = 20 N/m) mit der Amplitude 5 cm. Berechne T, f, ω, v̂, â und die Gesamtenergie.</em></p>
+    <div class="math-scroll">\[T = 2\pi\sqrt{\tfrac{0{,}5}{20}}\,\text s \approx 0{,}99\,\text s,\quad f \approx 1{,}0\,\text{Hz},\quad \omega = \sqrt{\tfrac{20}{0{,}5}}\,\tfrac1{\text s} \approx 6{,}32\,\tfrac1{\text s}\]</div>
+    <div class="math-scroll">\[\hat v = 0{,}05\cdot 6{,}32 \approx 0{,}32\,\tfrac{\text m}{\text s},\quad \hat a = 0{,}05\cdot 40 = 2{,}0\,\tfrac{\text m}{\text s^2},\quad E = \tfrac12\cdot 20\cdot 0{,}05^2 = 0{,}025\,\text J\]</div>
+    <p class="why">Kontrolle: \(\frac12 m\hat v^2 = \frac12\cdot 0{,}5\cdot 0{,}316^2 \approx 0{,}025\ \text J\). ✓</p>
+  </div></details>
+
+  <details><summary>B · Was passiert, wenn …? <span class="tag">Proportionalitäten</span></summary><div>
+    <p><em>a) Die Masse wird vervierfacht. b) Die Amplitude wird verdoppelt. Wie ändern sich T, v̂ und E?</em></p>
+    <p>a) \(T\sim\sqrt m\), also wird \(T\) doppelt so groß. \(\omega\) halbiert sich, also halbiert sich auch \(\hat v = \hat s\omega\) (bei gleichem \(\hat s\)). \(E = \frac12 D\hat s^2\) bleibt gleich.</p>
+    <p>b) \(T\) bleibt gleich, denn es ist unabhängig von der Amplitude. \(\hat v\) verdoppelt sich, \(E\sim\hat s^2\) vervierfacht sich.</p>
+  </div></details>
+
+  <details><summary>C · Federkonstante aus der Dehnung <span class="tag">D·s₀ = F_G</span></summary><div>
+    <p><em>Hängt man 200 g an eine Feder, dehnt sie sich um 10 cm. Mit welcher Periodendauer schwingt der Körper?</em></p>
+    <div class="math-scroll">\[D = \frac{F_G}{s_0} = \frac{0{,}2\cdot 9{,}81}{0{,}1}\,\tfrac{\text N}{\text m} \approx 19{,}6\,\tfrac{\text N}{\text m},\qquad T = 2\pi\sqrt{\tfrac{0{,}2}{19{,}6}}\,\text s \approx 0{,}63\,\text s\]</div>
+    <p class="why">Das ist Situation 1 vom Federpendel: In der GGL gilt \(D s_0 = F_G\).</p>
+  </div></details>
+
+  <details><summary>D · Energie halbe-halbe <span class="tag">Energieerhaltung</span></summary><div>
+    <p><em>Bei welcher Auslenkung sind Elongationsenergie und kinetische Energie gleich groß?</em></p>
+    <div class="math-scroll">\[\tfrac12 D s^2 = \tfrac12\cdot\tfrac12 D\hat s^2 \ \Rightarrow\ s^2 = \tfrac{\hat s^2}{2}\ \Rightarrow\ s = \pm\frac{\hat s}{\sqrt2} \approx \pm 0{,}71\,\hat s\]</div>
+    <p class="why">Nicht bei der halben Amplitude! Bei \(s = \frac{\hat s}2\) ist erst \(\frac14\) der Energie Elongationsenergie.</p>
+  </div></details>
+
+  <details><summary>E · Flüssigkeitspendel <span class="tag">T = 2π√(L/2g)</span></summary><div>
+    <p><em>Die Wassersäule in einem U-Rohr ist insgesamt 50 cm lang. Berechne T. Ändert sich T, wenn man Öl statt Wasser nimmt?</em></p>
+    <div class="math-scroll">\[T = 2\pi\sqrt{\frac{0{,}5}{2\cdot 9{,}81}}\,\text s \approx 1{,}0\,\text s\]</div>
+    <p>Nein, denn die Dichte kürzt sich heraus.</p>
+  </div></details>
+
+  <details><summary>F · t-s-Gesetz aufstellen <span class="tag">Anfangsbedingung</span></summary><div>
+    <p><em>Das Pendel aus A wird 5 cm nach oben ausgelenkt und bei t = 0 losgelassen (oben positiv). Gib s(t) an und berechne s(0,3 s).</em></p>
+    <p>Start oben, also Kosinus (bzw. \(t_0 = -\frac T4\)):</p>
+    <div class="math-scroll">\[s(t) = 0{,}05\,\text m\cdot\cos\!\big(6{,}32\,\tfrac1{\text s}\cdot t\big),\qquad s(0{,}3\,\text s) = 0{,}05\cdot\cos(1{,}897)\,\text m \approx -0{,}016\,\text m\]</div>
+    <p class="why">Nach 0,3 s (knapp T/3) ist der Körper schon 1,6 cm unter der GGL. Rechner auf RAD!</p>
+  </div></details>
+</section>
+
+<!-- 12 -->
+<section id="formeln">
+  <h2><span class="n">12</span>Formelsammlung &amp; typische Fehler</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Was</th><th>Formel</th></tr></thead>
+    <tbody>
+      <tr><td>Lineares Kraftgesetz</td><td>\(F = -D\cdot s\)</td></tr>
+      <tr><td>Kreisfrequenz</td><td>\(\omega = \frac{2\pi}{T} = \sqrt{\frac Dm}\)</td></tr>
+      <tr><td>Richtgröße</td><td>\(D = m\omega^2 = \frac{4\pi^2 m}{T^2}\)</td></tr>
+      <tr><td>Periodendauer</td><td>\(T = 2\pi\sqrt{\frac mD}\)</td></tr>
+      <tr><td class="cs">t-s-Gesetz</td><td>\(s(t) = \hat s\sin(\omega t)\)</td></tr>
+      <tr><td class="cv">t-v-Gesetz</td><td>\(v(t) = \hat v\cos(\omega t)\), \(\hat v = \hat s\omega\)</td></tr>
+      <tr><td class="ca">t-a-Gesetz</td><td>\(a(t) = -\hat a\sin(\omega t)\), \(\hat a = \hat s\omega^2\)</td></tr>
+      <tr><td>Fadenpendel, Rückstellkraft</td><td>\(F_R = -mg\sin\alpha\)</td></tr>
+      <tr><td>Fadenpendel, kleine Winkel <em>(Ergänzung)</em></td><td>\(T = 2\pi\sqrt{\frac lg}\)</td></tr>
+      <tr><td>Flüssigkeitspendel</td><td>\(D = 2\rho A g\), \(T = 2\pi\sqrt{\frac{L}{2g}}\)</td></tr>
+      <tr><td>Federpendel in Ruhe</td><td>\(D\cdot s_0 = F_G = m g\)</td></tr>
+      <tr><td>Energie</td><td>\(E_{ges} = \frac12 Ds^2 + \frac12 mv^2 = \frac12 D\hat s^2 = \frac12 m\hat v^2\)</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="warn box"><p class="box-title">Die häufigsten Fehler</p>
+    <ul style="margin:0">
+      <li>Taschenrechner auf DEG statt RAD.</li>
+      <li>Minuszeichen im Kraftgesetz oder im t-a-Gesetz vergessen.</li>
+      <li>Startbedingung ignoriert: Start unten heißt nicht \(\hat s\sin(\omega t)\).</li>
+      <li>Behauptet, dass \(T\) von der Amplitude abhängt. Das tut es bei harmonischen Schwingungen nie.</li>
+      <li>cm nicht in m umgerechnet, g nicht in kg.</li>
+      <li>Energiekurven mit Periode \(T\) statt \(T/2\) gezeichnet oder negativ gezeichnet.</li>
+      <li>Flüssigkeitspendel: für die Masse nur die Säule \(2s\) statt der ganzen Flüssigkeit genommen.</li>
+      <li>Vorzeichen von \(v\) nicht gedeutet: negativ heißt Bewegung nach unten (wenn oben positiv ist).</li>
+    </ul></div>
+
+  <div class="box"><p class="box-title">Kleine Korrekturen in deiner Mitschrift</p>
+    <ul style="margin:0">
+      <li><strong>Federpendel, Situation 5:</strong> Dort steht \(D(s_0 - s_3)\) und am Ende \(-D s_4\). Gemeint ist \(D(s_0-s_5) - Ds_0 = -D s_5\).</li>
+      <li><strong>Fadenpendel:</strong> Die tan-Variante gilt für eine waagerechte resultierende Kraft. Für die Rückstellkraft beim Schwingen nimm \(\sin\alpha\) (siehe Abschnitt 6).</li>
+      <li><strong>„D = Federkonstante“</strong> unter Ergebnis 1 der Kreisbewegung: Allgemein heißt \(D\) <em>Richtgröße</em>. Nur beim Federpendel ist sie die Federkonstante.</li>
+    </ul></div>
+</section>
+</main>
+</div>
+
+<script>
+(function () {
+  const cvM = document.getElementById('cvMech');
+  const cvG = document.getElementById('cvGraph');
+  const ctxM = cvM.getContext('2d');
+  const ctxG = cvG.getContext('2d');
+  const inM = document.getElementById('inM'), inD = document.getElementById('inD'), inA = document.getElementById('inA');
+  const outM = document.getElementById('outM'), outD = document.getElementById('outD'), outA = document.getElementById('outA');
+  const readout = document.getElementById('readout');
+  const barE = document.getElementById('barE'), barK = document.getElementById('barK');
+  const btnPlay = document.getElementById('btnPlay'), btnReset = document.getElementById('btnReset');
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let playing = !reduce;
+  let phi = reduce ? 0.75 : 0;
+  let t = 0;
+  let last = null;
+  btnPlay.textContent = playing ? 'Pause' : 'Abspielen';
+
+  const fmt = (x, d) => x.toFixed(d).replace('.', ',');
+  function params() {
+    const m = +inM.value, D = +inD.value, A = +inA.value;
+    const w = Math.sqrt(D / m), T = 2 * Math.PI / w;
+    return { m, D, A, w, T };
+  }
+  function colors() {
+    const cs = getComputedStyle(document.documentElement);
+    const g = n => cs.getPropertyValue(n).trim();
+    return { ink: g('--ink'), muted: g('--muted'), line: g('--line'), card: g('--card'), accent: g('--accent'), s: g('--s'), v: g('--v'), a: g('--a'), paper: g('--paper') };
+  }
+  function fit(cv, ctx) {
+    const r = cv.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+    const w = Math.max(1, Math.round(r.width * dpr)), h = Math.max(1, Math.round(r.height * dpr));
+    if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { W: r.width, H: r.height };
+  }
+  function arrow(ctx, x1, y1, x2, y2, col, wdt) {
+    const len = Math.hypot(x2 - x1, y2 - y1);
+    if (len < 3) return;
+    const ux = (x2 - x1) / len, uy = (y2 - y1) / len, hd = Math.min(9, len * 0.6);
+    ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = wdt;
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2 - ux * hd, y2 - uy * hd); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - ux * hd - uy * hd * 0.55, y2 - uy * hd + ux * hd * 0.55);
+    ctx.lineTo(x2 - ux * hd + uy * hd * 0.55, y2 - uy * hd - ux * hd * 0.55);
+    ctx.closePath(); ctx.fill();
+  }
+
+  function drawMech(p, c) {
+    const { W, H } = fit(cvM, ctxM), ctx = ctxM;
+    ctx.clearRect(0, 0, W, H);
+    ctx.font = '12px "IBM Plex Mono", monospace';
+    const cy = H / 2 + 8;
+    const Rmax = Math.min(H * 0.36, W * 0.17);
+    const R = Rmax * p.A / 0.2;
+    const cx = W * 0.2, screenX = W * 0.52, springX = W * 0.8;
+    const phi = p.w * t;
+    const px = cx + R * Math.cos(phi), py = cy - R * Math.sin(phi);
+
+    // Gleichgewichtslage
+    ctx.setLineDash([4, 4]); ctx.strokeStyle = c.muted; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(8, cy); ctx.lineTo(W - 8, cy); ctx.stroke();
+    // Lichtstrahl
+    ctx.setLineDash([3, 4]);
+    ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(springX, py); ctx.stroke();
+    ctx.setLineDash([]);
+    // Kreis
+    ctx.strokeStyle = c.ink; ctx.lineWidth = 1.3;
+    ctx.beginPath(); ctx.arc(cx, cy, Math.max(R, 1), 0, Math.PI * 2); ctx.stroke();
+    ctx.strokeStyle = c.accent; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(px, py); ctx.stroke();
+    ctx.fillStyle = c.ink; ctx.beginPath(); ctx.arc(cx, cy, 2.5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = c.card; ctx.strokeStyle = c.ink; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(px, py, 6, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = c.muted; ctx.fillText('Drehscheibe', cx - 38, H - 10);
+    // Schirm
+    ctx.strokeStyle = c.line; ctx.lineWidth = 7;
+    ctx.beginPath(); ctx.moveTo(screenX, 24); ctx.lineTo(screenX, H - 24); ctx.stroke();
+    ctx.fillStyle = c.ink; ctx.beginPath(); ctx.arc(screenX, py, 5.5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = c.muted; ctx.fillText('Schirm', screenX - 22, H - 10);
+    // Feder
+    const topY = 14, bw = 30, bh = 22;
+    ctx.fillStyle = c.muted; ctx.fillRect(springX - 22, topY - 6, 44, 6);
+    const endY = py - bh / 2, coils = 12, sw = 9;
+    ctx.strokeStyle = c.ink; ctx.lineWidth = 1.5; ctx.beginPath();
+    ctx.moveTo(springX, topY); ctx.lineTo(springX, topY + 8);
+    const len = endY - 8 - (topY + 8);
+    for (let i = 0; i <= coils * 2; i++) {
+      const y = topY + 8 + len * i / (coils * 2);
+      ctx.lineTo(springX + (i === 0 || i === coils * 2 ? 0 : (i % 2 ? sw : -sw)), y);
+    }
+    ctx.lineTo(springX, endY); ctx.stroke();
+    ctx.fillStyle = c.card; ctx.strokeStyle = c.ink; ctx.lineWidth = 2;
+    ctx.fillRect(springX - bw / 2, endY, bw, bh); ctx.strokeRect(springX - bw / 2, endY, bw, bh);
+    // Rückstellkraft
+    const s = p.A * Math.sin(phi);
+    const fLen = -(s / 0.2) * 55;
+    arrow(ctx, springX + bw / 2 + 12, py, springX + bw / 2 + 12, py - fLen, c.a, 2.5);
+    ctx.fillStyle = c.a; ctx.fillText('F', springX + bw / 2 + 18, py - fLen / 2 + 4);
+    ctx.fillStyle = c.muted; ctx.fillText('Federpendel', springX - 40, H - 10);
+    ctx.fillText('GGL', 10, cy - 6);
+  }
+
+  function drawGraph(p, c) {
+    const { W, H } = fit(cvG, ctxG), ctx = ctxG;
+    ctx.clearRect(0, 0, W, H);
+    ctx.font = '11.5px "IBM Plex Mono", monospace';
+    const Tw = 2 * p.T, tc = t % Tw;
+    const left = 30, right = W - 8, rows = 3, gap = 8, rh = (H - gap * (rows - 1) - 18) / rows;
+    const vhat = p.A * p.w, ahat = p.A * p.w * p.w;
+    const defs = [
+      { col: c.s, name: 's', unit: 'm', peak: p.A, f: x => Math.sin(p.w * x) },
+      { col: c.v, name: 'v', unit: 'm/s', peak: vhat, f: x => Math.cos(p.w * x) },
+      { col: c.a, name: 'a', unit: 'm/s²', peak: ahat, f: x => -Math.sin(p.w * x) }
+    ];
+    defs.forEach((d, i) => {
+      const top = i * (rh + gap), mid = top + rh / 2, amp = rh / 2 - 6;
+      ctx.strokeStyle = c.line; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(left, mid); ctx.lineTo(right, mid); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(left, top + 2); ctx.lineTo(left, top + rh - 2); ctx.stroke();
+      ctx.setLineDash([2, 4]);
+      ctx.beginPath(); ctx.moveTo(left, mid - amp); ctx.lineTo(right, mid - amp); ctx.moveTo(left, mid + amp); ctx.lineTo(right, mid + amp); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.strokeStyle = d.col; ctx.lineWidth = 2; ctx.beginPath();
+      const N = 160;
+      for (let k = 0; k <= N; k++) {
+        const x = Tw * k / N, X = left + (right - left) * k / N, Y = mid - amp * d.f(x);
+        k ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y);
+      }
+      ctx.stroke();
+      const X = left + (right - left) * tc / Tw, Y = mid - amp * d.f(tc);
+      ctx.fillStyle = d.col; ctx.beginPath(); ctx.arc(X, Y, 4, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = d.col; ctx.fillText(d.name, 8, mid + 4);
+      ctx.fillStyle = c.muted;
+      const lab = (d.name === 's' ? 'ŝ' : d.name === 'v' ? 'v̂' : 'â') + ' = ' + fmt(d.peak, 2) + ' ' + d.unit;
+      ctx.fillText(lab, right - ctx.measureText(lab).width, top + 11);
+    });
+    const X = left + (right - left) * tc / Tw;
+    ctx.strokeStyle = c.muted; ctx.globalAlpha = .5; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(X, 0); ctx.lineTo(X, H - 18); ctx.stroke(); ctx.globalAlpha = 1;
+    ctx.fillStyle = c.muted;
+    ctx.fillText('0', left - 3, H - 4);
+    const tl = 'T', t2 = '2T = ' + fmt(Tw, 2) + ' s';
+    ctx.fillText(tl, left + (right - left) / 2 - 3, H - 4);
+    ctx.fillText(t2, right - ctx.measureText(t2).width, H - 4);
+  }
+
+  function updateText(p) {
+    outM.textContent = fmt(p.m, 2) + ' kg';
+    outD.textContent = fmt(p.D, 2) + ' N/m';
+    outA.textContent = fmt(p.A * 100, 0) + ' cm';
+    const s = p.A * Math.sin(p.w * t), v = p.A * p.w * Math.cos(p.w * t);
+    const Ee = 0.5 * p.D * s * s, Ek = 0.5 * p.m * v * v, Eg = 0.5 * p.D * p.A * p.A;
+    barE.style.width = (100 * Ee / Eg) + '%';
+    barK.style.width = (100 * Ek / Eg) + '%';
+    readout.innerHTML =
+      '<span>T = <b>' + fmt(p.T, 3) + ' s</b></span>' +
+      '<span>ω = <b>' + fmt(p.w, 2) + ' 1/s</b></span>' +
+      '<span>E<sub>ges</sub> = <b>' + fmt(Eg * 1000, 1) + ' mJ</b></span>' +
+      '<span style="color:var(--muted)">t = ' + fmt(t, 2) + ' s</span>';
+  }
+
+  function frame(ts) {
+    const p = params(), c = colors();
+    if (last !== null && playing) phi += p.w * Math.min(0.05, (ts - last) / 1000);
+    last = ts;
+    t = phi / p.w;
+    drawMech(p, c); drawGraph(p, c); updateText(p);
+    requestAnimationFrame(frame);
+  }
+  btnPlay.addEventListener('click', () => { playing = !playing; btnPlay.textContent = playing ? 'Pause' : 'Abspielen'; });
+  btnReset.addEventListener('click', () => { phi = 0; });
+  requestAnimationFrame(frame);
+})();
+</script>
